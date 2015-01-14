@@ -3,9 +3,8 @@ body {
   line-height: 1.2em;
 }
 
-.snippet__thumbnail {
-  background-image: url('images/dog.jpg');
-  background-size: cover;
+.snippet__thumbnail > img {
+  width: 100%;
 }
 
 .snippet {
@@ -21,20 +20,29 @@ body {
 
 .snippet__thumbnail {
   order: 1;
-  -webkit-transition: all 0.5s;
-  -moz-transition: all 0.5s;
-  -o-transition: all 0.5s;
-  transition: all 0.5s;
+  width: 30%;
 }
 
 .snippet__description {
   order: 2;
   width: 70%;
   margin: 0;
+  padding: 0 0 0 1em;
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
+}
+
+@media screen and (max-width: 450px) {
+  .snippet__thumbnail {
+    display: none;
+  }
+
+  .snippet__description {
+    width: 100%;
+    padding: 0;
+  }
 }
 
 @media screen and (max-width: 550px) {
@@ -48,11 +56,11 @@ body {
   }
 
   .snippet__thumbnail {
-    height: 67px;
+    width: 30%;
+    margin: 0;
   }
 
   .snippet__description {
-    padding: 0;
     -webkit-line-clamp: 3;
     max-height: 3.7em;
   }
@@ -69,7 +77,6 @@ body {
   }
 
   .snippet__description {
-    padding: 0 0 0 1em;
     -webkit-line-clamp: 4;
     max-height: 4.9em
   }
@@ -81,9 +88,3 @@ body {
     font-size: 12px;
   }
 }
-
-/*
-
-new image for stories. use something from RI
-
-*/
