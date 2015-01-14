@@ -168,7 +168,7 @@ main {
  */
 
 .top-news {
-  height: 300px;
+  max-height: 300px;
   border-bottom: 1px solid #E0E0E0;
   padding: 1em;
   width: 100%;
