@@ -15,6 +15,17 @@
         transition: all 0.5s;
       }
 
+      @media screen and (min-width: 500px) {
+        .gametime {
+          display: hidden;
+        }
+      }
+      @media screen and (max-width: 500px) {
+        .gametime {
+          display: hidden;
+        }
+      }
+
       @media screen and (min-width: 1px) and (max-width: 2px) {
         /*
         This seems like a good place for code... Make sure you change the breakpoints!
@@ -26,6 +37,27 @@
     <div class="container">
       <h1 class="yes">This is page content.</h1>
       <p>media queries. Media queries. Media queries! MEDIA QUERIES!</p>
+            <table class="scores__table">
+        <thead>
+          <tr>
+            <th>date</th>
+            <th class="gametime">game time</th>
+            <th>team</th>
+            <th colspan="2">score</th>
+            <th>team</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Friday</td>
+            <td class="gametime">7:05pm</td>
+            <td>Royals</td>
+            <td>2</td>
+            <td class="winner">3</td>
+            <td class="winner">Giants</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </body>
 </html>
