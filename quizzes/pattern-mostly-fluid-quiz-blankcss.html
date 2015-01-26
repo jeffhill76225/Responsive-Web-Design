@@ -4,7 +4,7 @@
     <title>Mostly Fluid - Quiz</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
+    <style type="text/css">
       /*
       These are the default styles. No need to change these.
       */
@@ -67,6 +67,12 @@
 
       .box {
         width: 100%;
+      }
+
+      @media screen and (max-width: 600px) {
+        .red {
+          width: 50%;
+        }
       }
     </style>
   </head>
