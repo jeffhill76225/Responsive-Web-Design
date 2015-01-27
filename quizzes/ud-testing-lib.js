@@ -1,5 +1,7 @@
 /*
 Udacity's library for grading sites modified with DevTools.
+
+Cameron Pittman
 */
 
 // this is pretty useful
@@ -15,10 +17,8 @@ function toArray(obj) {
 function isViewportSet() {
   var hasRightMeta = false;
   var correctViewportContent = 'width=device-width,initial-scale=1.0';
-
   var metas = document.querySelectorAll('meta');
   metas = toArray(metas);
-
   metas.forEach(function(val) {
     var content, name;
     try {
@@ -35,6 +35,22 @@ function isViewportSet() {
   return hasRightMeta;
 }
 
+function isViewportWidthCorrect(expected) {
+  var isCorrect = false;
+  var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  width === expected[0] ? isCorrect = true : isCorrect = false;
+  console.log("width: " + isCorrect);
+  return isCorrect;
+}
+
+function isViewportHeightCorrect(expected) {
+  var isCorrect = false;
+  var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  height === expected[0] ? isCorrect = true : isCorrect = false;
+  console.log("height: " + isCorrect);
+  return isCorrect;
+}
+
 function isMediaQuerySet(udArr) {
   var isCorrect = false;
 
@@ -45,22 +61,14 @@ function isMediaQuerySet(udArr) {
 
   function hasRelevantCSS(stdRules) {
     var correct = false;
-    
+    var rulesHit = 0;
     var numberOfNeededStyles = 0;
-
-    // build an array of selectors to compare
     var udSelectors = [];
     for (a in udArr) {
       for (c in udArr[a].styles)
       udSelectors.push(udArr[a].styles[c].selector)
-    // console.log(udArr)
       for (b in udArr[a].styles[c].styles) numberOfNeededStyles+=1;
     }
-
-    console.log(numberOfNeededStyles)
-
-    var rulesHit = 0;
-
     function isNeededSelector(stdSel) {
       var isHit = false;
       for (p in udSelectors) {
@@ -70,7 +78,7 @@ function isMediaQuerySet(udArr) {
       }
       return isHit;
     }
-
+    // remind me to never, ever, ever do this again.
     for (j in stdRules) {
       if (isNeededSelector(stdRules[j].selectorText)) {
         for (u in udArr) {
@@ -89,7 +97,6 @@ function isMediaQuerySet(udArr) {
         }
       }
     }
-
     if (rulesHit === numberOfNeededStyles && rulesHit > 0) correct = true;
     return correct;
   }
@@ -98,16 +105,13 @@ function isMediaQuerySet(udArr) {
     var mqValid = false;
 
     var mq = getMQ(rulez);
-    // console.log(mq, arr[0].mq)
     if (mq === udArr[0].mq) {
       mqValid = true;
       mqValid = hasRelevantCSS(rulez.cssRules) && mqValid;
     }
-    // console.log("----> " + mqValid)
     return mqValid;
   }
 
-  // iterating through document.styleSheets!!!
   var ss = document.styleSheets;
   var allTestResults = [];
 
@@ -118,13 +122,28 @@ function isMediaQuerySet(udArr) {
         rulesList = cssRulesList[r];
         if (rulesList instanceof CSSMediaRule) {
           var mqCorrect = testMQValidity(rulesList);
-          // console.log("---->" + mqCorrect);
           if (mqCorrect) break;
         }
       }
     }
   }
   return mqCorrect;
+}
+
+function isDPRCorrect(expected) {
+  var isCorrect = false;
+  var dpr = window.devicePixelRatio;
+  dpr === expected[0] ? isCorrect = true : isCorrect = false;
+  console.log("dpr: " + isCorrect);
+  return isCorrect;
+}
+
+function isUACorrect(expected) {
+  var isCorrect = false;
+  var ua = window.navigator.userAgent;
+  ua === expected[0] ? isCorrect = true : isCorrect = false;
+  console.log("ua: " + isCorrect);
+  return isCorrect;
 }
 
 function updateResultsDisplay(test) {
@@ -144,7 +163,7 @@ function runGradeLoop(arr, code) {
       if (arr.indexOf(arr[i]) === 0) {
         isCorrect = testCorrect;
       } else {
-        testCorrect = isCorrect && testCorrect;
+        isCorrect = isCorrect && testCorrect;
       }
       updateResultsDisplay({desc: arr[i].desc, correct: testCorrect})
     }
