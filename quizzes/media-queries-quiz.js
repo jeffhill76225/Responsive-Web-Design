@@ -1,66 +1,63 @@
 var tests = [
   {
-    test: isMediaQuerySet,
+    test: testMediaQueries,
     params: [
       {
-        // max-width always comes before min-width!
-        mq: "screen and (max-width: 400px)",
+        width: "399px",
         styles: [
           {
             selector: "body",
-            styles: [
+            css: [
               {
                 property: "backgroundColor",
-                value: "red"
+                value: "rgb(255, 0, 0)"
               }
             ]
           }
         ]
       }
     ],
-    desc: "Small breakpoint test."
+    desc: "Under 400px wide, the body is red."
   },
   {
-    test: isMediaQuerySet,
+    test: testMediaQueries,
     params: [
       {
-        // max-width always comes before min-width!
-        mq: "screen and (max-width: 401px) and (min-width: (599px)",
+        width: "450px",
         styles: [
           {
             selector: "body",
-            styles: [
+            css: [
               {
                 property: "backgroundColor",
-                value: "green"
+                value: "rgb(0, 255, 0)"
               }
             ]
           }
         ]
       }
     ],
-    desc: "Medium breakpoint test."
+    desc: "Between 401 and 599px wide, the body is green."
   },
   {
-    test: isMediaQuerySet,
+    test: testMediaQueries,
     params: [
       {
-        // max-width always comes before min-width!
-        mq: "screen and (min-width: 600px)",
+        width: "650px",
         styles: [
           {
             selector: "body",
-            styles: [
+            css: [
               {
                 property: "backgroundColor",
-                value: "blue"
+                value: "rgb(0, 0, 255)"
               }
             ]
           }
         ]
       }
     ],
-    desc: "Large breakpoint test."
+    desc: "Greater than 600px wide, the body is blue."
   }
 ];
-runGradeLoop(tests, "BREAKingbadPOINTS");
+window.onload = function() {runGradeLoop(tests, "BREAKingbadPOINTS")};

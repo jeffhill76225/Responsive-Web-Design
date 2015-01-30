@@ -1,10 +1,11 @@
 /*
-Udacity's library for grading sites modified with DevTools.
+Udacity's (growing and kinda ugly) library for grading sites modified with DevTools.
+
+Version 0.02
 
 Cameron Pittman
 */
 
-// this is pretty useful
 function toArray(obj) {
   var array = [];
   // iterate backwards ensuring that length is an UInt32
@@ -39,7 +40,7 @@ function isViewportWidthCorrect(expected) {
   var isCorrect = false;
   var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
   width === expected[0] ? isCorrect = true : isCorrect = false;
-  console.log("width: " + isCorrect);
+  // console.log("width: " + isCorrect);
   return isCorrect;
 }
 
@@ -47,94 +48,91 @@ function isViewportHeightCorrect(expected) {
   var isCorrect = false;
   var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
   height === expected[0] ? isCorrect = true : isCorrect = false;
-  console.log("height: " + isCorrect);
+  // console.log("height: " + isCorrect);
   return isCorrect;
 }
 
-function isMediaQuerySet(udArr) {
-  var isCorrect = false;
 
-  function getMQ(rulesList) {
-    var studentMQ = rulesList.media["0"];
-    return studentMQ;
+var iframeElem;
+function testMediaQueries(udArr) {
+  /*
+  This is an insane piece of code that's not fully functional.
+
+  To test whether or not breakpoints are set correctly,
+  we create an iframe off the viewport containing the current page.
+  Then, we resize the iframe's width and query it for styles.
+
+  Seems simple, but it isn't. IFRAMES ARE CRAZY!
+
+  Also, this will need to be refactored for more robustness at
+  some point.
+  */
+  var contentCopy = document.body.parentElement.innerHTML;
+  
+  // Why all the replaces? To make sure that no JS runs in the iframe.
+  // JS in the iframe was an incredibly annoying source of bugs during
+  // development.
+  contentCopy = contentCopy.replace(/<script/g, "<!-- <script");
+  contentCopy = contentCopy.replace(/<\/script>/g, "<\/script> -->");
+  contentCopy = contentCopy.replace(/<iframe/g, "<!-- <iframe");
+  contentCopy = contentCopy.replace(/<\/iframe>/g, "<\/iframe> -->");
+
+  iframeElem = iframeElem || document.querySelector('iframe.mq-test');
+  
+  if (!iframeElem) {
+    iframeElem = document.createElement('iframe');
+    iframeElem.classList.add('mq-test');
+    iframeElem.src = 'about:blank';
+    document.body.appendChild(iframeElem);
+    iframeElem.style.position = 'absolute';
+    iframeElem.style.left = '100%';
   }
 
-  function hasRelevantCSS(stdRules) {
-    var correct = false;
-    var rulesHit = 0;
-    var numberOfNeededStyles = 0;
-    var udSelectors = [];
-    for (a in udArr) {
-      for (c in udArr[a].styles)
-      udSelectors.push(udArr[a].styles[c].selector)
-      for (b in udArr[a].styles[c].styles) numberOfNeededStyles+=1;
-    }
-    function isNeededSelector(stdSel) {
-      var isHit = false;
-      for (p in udSelectors) {
-        if (udSelectors[p] === stdSel) {
-          isHit = true;
+  function setIframeWidth(_width) {
+    iframeElem.style.width = _width;
+  }
+
+  // Not sure why, but any selector other than 'body' seems to fail...
+  // TODO: make other selectors work
+  function getStyleFromIframe(_selector, _property) {
+    var computedStyles = getComputedStyle(iframeElem.contentDocument.querySelector(_selector));
+    return computedStyles[_property];
+  }
+
+  setIframeWidth(udArr[0].width);
+
+  var hasCorrectStyles = false;
+  // iterate through styles and get values
+  udArr.forEach(function(obj, a) {
+    obj.styles.forEach(function(sel, b) {
+      sel.css.forEach(function(pv, c) {
+        var stdValue = getStyleFromIframe(sel.selector, pv.property);
+        if (stdValue === pv.value && c === 0) {
+          hasCorrectStyles = true;
+        } else if (stdValue === pv.value) {
+          hasCorrectStyles = hasCorrectStyles && true;
+        } else {
+          hasCorrectStyles = hasCorrectStyles && false;
         }
-      }
-      return isHit;
-    }
-    // remind me to never, ever, ever do this again.
-    for (j in stdRules) {
-      if (isNeededSelector(stdRules[j].selectorText)) {
-        for (u in udArr) {
-          for (v in udArr[u].styles) {
-            var sel = udArr[u].styles[v].selector;
-            if (sel === stdRules[j].selectorText) {
-              for (z in udArr[u].styles[v].styles) {
-                var prop = udArr[u].styles[v].styles[z].property;
-                var val = udArr[u].styles[v].styles[z].value;
-                if (stdRules[j].style[prop] === val) {
-                  rulesHit+=1;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    if (rulesHit === numberOfNeededStyles && rulesHit > 0) correct = true;
-    return correct;
-  }
+        console.log(iframeElem);
+        console.log(udArr[0].width, Math.max(iframeElem.contentWindow.innerWidth));
+        console.log(stdValue, pv.value);
+        console.log(hasCorrectStyles)
+      })
+    })
+  })
 
-  function testMQValidity(rulez) {
-    var mqValid = false;
+  try {
+    iframeElem.contentDocument.body.parentElement.innerHTML = contentCopy;
+  } catch (e){}
 
-    var mq = getMQ(rulez);
-    if (mq === udArr[0].mq) {
-      mqValid = true;
-      mqValid = hasRelevantCSS(rulez.cssRules) && mqValid;
-    }
-    return mqValid;
-  }
-
-  var ss = document.styleSheets;
-  var allTestResults = [];
-
-  for (s in ss) {
-    var cssRulesList = ss[s].cssRules;
-    if (cssRulesList) {
-      for (r in cssRulesList) {
-        rulesList = cssRulesList[r];
-        if (rulesList instanceof CSSMediaRule) {
-          var mqCorrect = testMQValidity(rulesList);
-          if (mqCorrect) break;
-        }
-      }
-    }
-  }
-  return mqCorrect;
+  return hasCorrectStyles;
 }
 
 function isDPRCorrect(expected) {
   var isCorrect = false;
   var dpr = window.devicePixelRatio;
   dpr === expected[0] ? isCorrect = true : isCorrect = false;
-  console.log("dpr: " + isCorrect);
   return isCorrect;
 }
 
@@ -142,34 +140,148 @@ function isUACorrect(expected) {
   var isCorrect = false;
   var ua = window.navigator.userAgent;
   ua === expected[0] ? isCorrect = true : isCorrect = false;
-  console.log("ua: " + isCorrect);
   return isCorrect;
 }
 
-function updateResultsDisplay(test) {
-  // console.log(test.correct);
+function createResultsDisplay() {
+  var head = document.querySelector('head');
+  var fontAwesome = document.createElement('link');
+  fontAwesome.rel = 'stylesheet';
+  fontAwesome.href = 'http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css';
+  head.appendChild(fontAwesome);
+
+  var gradeDisplayDiv = document.createElement('div');
+  gradeDisplayDiv.classList.add('grade-display');
+  gradeDisplayDiv.style.position = 'absolute';
+  gradeDisplayDiv.style.minWidth = '200px';
+  gradeDisplayDiv.style.backgroundColor = 'rgba(112, 128, 144, 0.8)';
+  gradeDisplayDiv.style.right = '0px';
+  gradeDisplayDiv.style.top = '0px';
+
+  document.querySelector('body').appendChild(gradeDisplayDiv);
 }
 
-function displayCode(code) {
-  alert("You got it! Here's your code: " + code);
+function updateResultsDisplay(test, cb) {
+
+  function addTestDisplay(_test) {
+    var newTest = document.createElement('div');
+    newTest.classList.add('udTest');
+    newTest.innerHTML = _test.desc;
+    newTest.color = 'red';
+    var marker = document.createElement('i');
+    marker.classList.add('fa');
+    newTest.appendChild(marker);
+
+    document.querySelector('.grade-display').appendChild(newTest);
+  }
+
+  function updateTestDisplay(testObj) {
+    var displayedTests = document.querySelector('.grade-display').children;
+    displayedTests = toArray(displayedTests);
+
+    var check = 'fa-check';
+    var ex = 'fa-times';
+    var onScreen = false;
+
+    for (dt in displayedTests) {
+      if (displayedTests[dt].innerHTML.indexOf(testObj.desc) > -1) {
+        onScreen = true;
+        var icon = displayedTests[dt].querySelector('i');
+        if (testObj.correct === true) {
+          icon.classList.add(check);
+          icon.classList.remove(ex);
+          displayedTests[dt].style.color = 'green';
+        } else {
+          icon.classList.add(ex);
+          icon.classList.remove(check);
+          displayedTests[dt].style.color = 'red';
+        }
+      } 
+    }
+    if (!onScreen) addTestDisplay(testObj);
+  }
+  updateTestDisplay(test);
+  var callback = cb || function(){};
+  callback();
 }
 
+function displayCode(_code) {
+  // alert("Great job! Here's your code: " + _code);
+  var gd = document.querySelector('.grade-display');
+  var code = document.createElement('div');
+  code.innerHTML = "Code: " + _code;
+  gd.appendChild(code);
+}
+
+function runGradeOnce(arr, code) {
+  
+}
+
+// The grading engine lives here.
 function runGradeLoop(arr, code) {
   var isCorrect = false;
+
+  createResultsDisplay();
+
+  var testStatuses = [];
+  for (_i in arr) testStatuses.push(arr[_i]);
+
+  function hasTestStatusDiff(obj) {
+    var update = false;
+    for (t in testStatuses) {
+      if (obj.desc === testStatuses[t].desc && obj.correct === testStatuses[t].correct) {
+        obj.needsUpdate = false;
+        obj.isNewTest = false;
+        break;
+      } else if (obj.desc === testStatuses[t].desc && obj.correct !== testStatuses[t].correct) {
+        obj.needsUpdate = true;
+        obj.isNewTest = false;
+        testStatuses[t].correct = obj.correct;
+        update = obj;
+      } else {
+        obj.isNewTest = true;
+        obj.needsUpdate = true;
+        update = obj;
+        console.log(obj, testStatuses[t]);
+      }
+    }
+    return update;
+  }
 
   var gradeLoop = setInterval(function() {
     for (i in arr) {
       var testCorrect = arr[i].test(arr[i].params);
+      var testObj = {
+        desc: arr[i].desc,
+        correct: testCorrect
+      }
+      updateResultsDisplay(testObj);
       if (arr.indexOf(arr[i]) === 0) {
         isCorrect = testCorrect;
       } else {
         isCorrect = isCorrect && testCorrect;
       }
-      updateResultsDisplay({desc: arr[i].desc, correct: testCorrect})
     }
-    if (isCorrect) {
-      clearInterval(gradeLoop);
-      displayCode(code);
+
+    // An ugly hack to make sure that all of the tests are displayed
+    // properly before the code is display.
+    // TODO: Remove when possible!
+    var gradeDisplays = document.querySelectorAll('.grade-display > div');
+    gradeDisplays = toArray(gradeDisplays);
+    var allGreen = false;
+    for (ag in gradeDisplays) {
+      if (gradeDisplays.indexOf(gradeDisplays[ag]) === 0 && gradeDisplays[ag].style.color === 'green') {
+        allGreen = true;
+      } else if (gradeDisplays[ag].style.color === 'green') {
+        allGreen = allGreen && true;
+      }
+    }
+
+    if (isCorrect && allGreen) {
+      updateResultsDisplay(testObj, function(){
+        clearInterval(gradeLoop)
+        displayCode(code);
+      })
     }
   }, 1000)
 }
