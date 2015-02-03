@@ -96,12 +96,18 @@ function testMediaQueries(udArr) {
   // TODO: make other selectors work
   function getStyleFromIframe(_selector, _property) {
     var computedStyles = getComputedStyle(iframeElem.contentDocument.querySelector(_selector));
-    var calculatedStyle = computedStyles[_property];
     return computedStyles[_property];
   }
 
   setIframeWidth(udArr[0].width);
-  console.log(udArr[0].width, Math.max(iframeElem.contentWindow.innerWidth));
+
+  // This is a strange situation. Accessing .innerWidth forces layout... I'm pretty sure.
+  // This needs to happen otherwise the iframe width won't resize and everything breaks.
+  // Wow. JS is super weird.
+  // TODO: find a less janky way to force layout? 
+  if (iframeElem.contentWindow.innerWidth === "") {
+    console.log(iframeElem.contentWindow.innerWidth);
+  }
 
   var hasCorrectStyles = false;
   // iterate through styles and get values
@@ -116,13 +122,9 @@ function testMediaQueries(udArr) {
         } else {
           hasCorrectStyles = hasCorrectStyles && false;
         }
-        console.log(iframeElem);
-        console.log(stdValue, pv.value);
-        console.log(hasCorrectStyles)
       })
     })
   })
-  // setIframeWidth(udArr[0].width);
 
   try {
     iframeElem.contentDocument.body.parentElement.innerHTML = contentCopy;
