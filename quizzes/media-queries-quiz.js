@@ -30,7 +30,7 @@ var tests = [
             css: [
               {
                 property: "backgroundColor",
-                value: "rgb(0, 255, 0)"
+                value: "rgb(0, 128, 0)"
               }
             ]
           }
