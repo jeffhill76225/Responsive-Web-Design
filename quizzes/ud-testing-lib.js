@@ -6,6 +6,7 @@ Version 0.02
 Cameron Pittman
 */
 
+// TODO: stop using this and switch to Array.prototype.slic()
 function toArray(obj) {
   var array = [];
   // iterate backwards ensuring that length is an UInt32
@@ -158,9 +159,10 @@ function createResultsDisplay() {
   gradeDisplayDiv.classList.add('grade-display');
   gradeDisplayDiv.style.position = 'absolute';
   gradeDisplayDiv.style.minWidth = '200px';
-  gradeDisplayDiv.style.backgroundColor = 'rgba(112, 128, 144, 0.8)';
+  gradeDisplayDiv.style.backgroundColor = 'rgba(112, 128, 144, 0.9)';
   gradeDisplayDiv.style.right = '0px';
   gradeDisplayDiv.style.top = '0px';
+  gradeDisplayDiv.style.padding = "0.5em";
 
   document.querySelector('body').appendChild(gradeDisplayDiv);
 }
@@ -210,11 +212,12 @@ function updateResultsDisplay(test, cb) {
 }
 
 function displayCode(_code) {
-  // alert("Great job! Here's your code: " + _code);
   var gd = document.querySelector('.grade-display');
   var code = document.createElement('div');
-  code.innerHTML = "Code: " + _code;
+  code.innerHTML = "Code:<br>" + _code;
   gd.appendChild(code);
+  // gd.style.cursor = "pointer";
+  // gd.onclick = function(){alert("Great job! Here's your code: \n" + _code)}
 }
 
 function runGradeOnce(arr, code) {
@@ -268,7 +271,7 @@ function runGradeLoop(arr, code) {
     }
 
     // An ugly hack to make sure that all of the tests are displayed
-    // properly before the code is display.
+    // properly before the code is displayed.
     // TODO: Remove when possible!
     var gradeDisplays = document.querySelectorAll('.grade-display > div');
     gradeDisplays = toArray(gradeDisplays);
