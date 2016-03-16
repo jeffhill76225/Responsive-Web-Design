@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="../default-styles.css">
+    <meta name="udacity-grader" content="custom-device-quiz.json">
     <style type="text/css">
       html, body {
         height: 100%;
@@ -37,8 +38,29 @@
 
       window.requestAnimationFrame(tick);
 
+      var hasWidth = false;
+      var hasHeight = false;
+
+      var interval = window.setInterval(runTests, 1000);
+      function runTests() {
+        if (hasHeight && hasWidth) {
+          window.clearInterval(interval);
+        }
+
+        var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+        if (width === 412) {
+          hasWidth = true;
+          window.dispatchEvent(new CustomEvent('ud-width', {'detail': 'passed'}));
+        }
+
+        if (height === 603) {
+          hasHeight = true;
+          window.dispatchEvent(new CustomEvent('ud-height', {'detail': 'passed'}));
+        }
+      }
+
     </script>
-    <script src="ud-testing-lib.js"></script>
-    <script src="custom-device-quiz.js"></script>
   </body>
 </html>

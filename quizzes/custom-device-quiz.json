@@ -1,0 +1,34 @@
+[{
+  "name": "Custom Device Quiz",
+  "code": "timtheDEVTOOLmantaylor!",
+  "tests": [
+    {
+      "description": "User Agent is set correctly",
+      "definition": {
+        "get": "UAString",
+        "equals": "Mozilla/5.0 (Linux; Android 5.0; Nexus 6 Build/XXX00x) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.59 Mobile Safari/537.36"
+      }
+    },
+    {
+      "description": "Viewport width is 412px",
+      "definition": {
+        "waitForEvent": "ud-width",
+        "exists": true
+      }
+    },
+    {
+      "description": "Viewport height is 603px",
+      "definition": {
+        "waitForEvent": "ud-height",
+        "exists": true
+      }
+    },
+    {
+      "description": "Device Pixel Ratio is 3.5",
+      "definition": {
+        "get": "DPR",
+        "equals": 3.5
+      }
+    }
+  ]
+}]
