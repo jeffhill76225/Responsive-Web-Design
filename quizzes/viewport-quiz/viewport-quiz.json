@@ -1,0 +1,24 @@
+[{
+  "name": "Set Viewport Quiz",
+  "code": "viewportsFTW!",
+  "tests": [
+    {
+      "description": "A meta tag describes the viewport",
+      "definition": {
+        "nodes": "meta",
+        "limit": 1,
+        "attribute": "name",
+        "equals": "viewport"
+      }
+    },
+    {
+      "description": "A meta tag sets the content",
+      "definition": {
+        "nodes": "meta",
+        "limit": 1,
+        "attribute": "content",
+        "hasSubstring": "width=device-width, initial-scale=1.0"
+      }
+    }
+  ]
+}]
