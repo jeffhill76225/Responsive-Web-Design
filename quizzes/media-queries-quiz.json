@@ -1,0 +1,27 @@
+[{
+  "name": "Media Queries Quiz",
+  "code": "BREAKingbadPOINTS",
+  "tests": [
+    {
+      "description": "Under 400px wide, the body is red",
+      "definition": {
+        "waitForEvent": "ud-small",
+        "exists": true
+      }
+    },
+    {
+      "description": "Between 401 and 599px wide, the body is green",
+      "definition": {
+        "waitForEvent": "ud-medium",
+        "exists": true
+      }
+    },
+    {
+      "description": "Greater than 600px wide, the body is blue",
+      "definition": {
+        "waitForEvent": "ud-large",
+        "exists": true
+      }
+    }
+  ]
+}]
