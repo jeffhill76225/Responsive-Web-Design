@@ -12,21 +12,21 @@
       passed: false,
       width: "399px",
       css: {
-        value: "rgb(255, 0, 0)"
+        values: ["rgb(255, 0, 0)"]
       }
     },
     "ud-medium": {
       passed: false,
       width: "450px",
       css: {
-        value: "rgb(0, 128, 0)"
+        values: ["rgb(0, 128, 0)", "rgb(0, 255, 0)"]
       }
     },
     "ud-large": {
       passed: false,
       width: "650px",
       css: {
-        value: "rgb(0, 0, 255)"
+        values: ["rgb(0, 0, 255)"]
       }
     }
   };
@@ -103,9 +103,11 @@
 
       var hasCorrectStyle = false;
 
-      if (studentValue === tests[size].css.value) {
-        hasCorrectStyle = true;
-      }
+      tests[size].css.values.forEach(function(value) {
+        if (studentValue === value) {
+          hasCorrectStyle = true;
+        }
+      });
 
       if (hasCorrectStyle) {
         switch(size) {
