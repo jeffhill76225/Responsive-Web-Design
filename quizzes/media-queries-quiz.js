@@ -40,14 +40,6 @@
     styles = document.head.querySelector('style').innerHTML;
   }
 
-  function generateIframeContent(size) {
-    return new Promise(function(resolve, reject) {
-      var content = document.body.querySelector('.container').innerHTML;
-      contentCopy = '<style>' + styles + '</style>' + content + '<script>var s = window.getComputedStyle(document.body); var color = s.backgroundColor; parent.window.giveIframeValue("' + size + '", color);</script>';
-      resolve();
-    })
-  }
-
   function createIframe() {
     return new Promise(function(resolve, reject) {
       iframeElem = document.querySelector('iframe.mq-test');
@@ -58,7 +50,7 @@
         document.body.appendChild(iframeElem);
         iframeElem.style.position = 'absolute';
         iframeElem.style.left = '100%';
-        iframeElem.srcdoc = '';
+        iframeElem.src = 'about:blank';
       }
       resolve();
     });
@@ -88,7 +80,19 @@
           resolve({size: size, value: value});
         }
       };
-      iframeElem.srcdoc = contentCopy;
+      var content = document.body.querySelector('.container').innerHTML;
+
+      var styleTag = document.createElement('style');
+      styleTag.innerHTML = styles;
+      iframeElem.contentDocument.head.appendChild(styleTag);
+      
+      var divTag = document.createElement('div');
+      divTag.innerHTML = content;
+      iframeElem.contentDocument.body.appendChild(divTag);
+
+      var scriptTag = document.createElement('script');
+      scriptTag.innerHTML = 'var s = window.getComputedStyle(document.body); var color = s.backgroundColor; parent.window.giveIframeValue("' + size + '", color)';
+      iframeElem.contentDocument.body.appendChild(scriptTag);
     });
   }
 
@@ -140,9 +144,6 @@
         .then(createIframe)
         .then(function() {
           return setIframeWidth(value.width);
-        })
-        .then(function() {
-          return generateIframeContent(size);
         })
         .then(function() {
           return addContentToIframe(size);
