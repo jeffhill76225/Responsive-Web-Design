@@ -50,7 +50,7 @@
 
   function createIframe() {
     return new Promise(function(resolve, reject) {
-      iframeElem = document.querySelector('iframe.mq-test') || iframeElem;
+      iframeElem = document.querySelector('iframe.mq-test');
 
       if (!iframeElem) {
         iframeElem = document.createElement('iframe');
@@ -97,6 +97,7 @@
       if (!report) {
         // whatevs, don't worry about it
         resolve();
+        return;
       }
       var size = report.size;
       var studentValue = report.value;
@@ -110,19 +111,7 @@
       });
 
       if (hasCorrectStyle) {
-        switch(size) {
-          case 'ud-small':
-            tests[size].passed = true;
-            break;
-          case 'ud-medium':
-            tests[size].passed = true;
-            break;
-          case 'ud-large':
-            tests[size].passed = true;
-            break;
-          default:
-            break;
-        }
+        tests[size].passed = true;
         window.dispatchEvent(new CustomEvent(size, {'detail': 'passed'}));
       }
       resolve();
