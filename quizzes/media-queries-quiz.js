@@ -82,6 +82,9 @@
       };
       var content = document.body.querySelector('.container').innerHTML;
 
+      iframeElem.contentDocument.head.innerHTML = '';
+      iframeElem.contentDocument.body.innerHTML = '';
+
       var styleTag = document.createElement('style');
       styleTag.innerHTML = styles;
       iframeElem.contentDocument.head.appendChild(styleTag);
