@@ -17,7 +17,13 @@
         "nodes": "meta",
         "limit": 1,
         "attribute": "content",
-        "hasSubstring": "width=device-width, initial-scale=1.0"
+        "hasSubstring": {
+          "expected": [
+            "width=device-width",
+            "initial-scale=1\\.?0?"
+          ],
+          "minValues": 2
+         }
       }
     }
   ]
